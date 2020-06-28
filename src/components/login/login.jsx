@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import fire from '../../fire.js';
+import './login.sass';
 
 const Login = () => {
   const [email, setEmail] = useState('test@test.com');
