@@ -25,8 +25,8 @@ const Login = () => {
   return (
     <div>
       <div>
-        <h2>Login</h2>
-        <h2>Register</h2>
+        <h2 className={ loginSelected ? 'underline' : '' }>Login</h2>
+        <h2 className={ loginSelected ? '' : 'underline' }>Register</h2>
       </div>
       <form onSubmit={ loginSelected ? login : register }>
         <div>
@@ -35,12 +35,13 @@ const Login = () => {
             <input type='text' onChange={ (e) => setEmail(e.target.value)} value={email} />
           </label>
         </div>
+        <div>
           <label>
             password:
             <input type='password' onChange={ (e) => setPassword(e.target.value)} value={password} />
           </label>
-        <div>
         </div>
+        <button>{ loginSelected ? 'Login' : 'Register' }</button>
       </form>
     </div>
   )
