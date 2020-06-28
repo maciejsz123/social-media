@@ -6,11 +6,12 @@ const Login = () => {
   const [email, setEmail] = useState('test@test.com');
   const [password, setPassword] = useState('testtest');
   const [loginSelected, setLoginSelected] = useState(true);
+  const db = fire.firestore();
 
   function login(e) {
     e.preventDefault();
 
-    fire.signupWithEmailAndPassword(email, password)
+    fire.auth().signInWithEmailAndPassword(email, password)
     .then( user => console.log('logged'))
     .catch( error => console.log('error'))
   }
@@ -18,32 +19,34 @@ const Login = () => {
   function register(e) {
     e.preventDefault();
 
-    fire.createUserWithEmailAndPassword(email, password)
-    .then( user => console.log('registered'))
+    fire.auth().createUserWithEmailAndPassword(email, password)
+    .then( user => {
+      db.collection('users').add({ name: email, friends: [] });
+    })
     .catch( error => console.log('error'))
   }
 
   return (
-    <div>
-      <div>
-        <h2 className={ loginSelected ? 'underline' : '' }>Login</h2>
-        <h2 className={ loginSelected ? '' : 'underline' }>Register</h2>
+    <div className='login-view'>
+      <div className='login-component'>
+        <div className='login-title'>
+          <span className={ `${loginSelected ? 'underline' : ''}` } onClick={ () => setLoginSelected(true) }>Login</span>
+          <span className={ `${loginSelected ? '' : 'underline'}` } onClick={ () => setLoginSelected(false) }>Register</span>
+        </div>
+        <form className='login-form' onSubmit={ loginSelected ? login : register }>
+          <div>
+            <label>
+              <input type='text' placeholder='e-mail' onChange={ (e) => setEmail(e.target.value)} value={email} />
+            </label>
+          </div>
+          <div>
+            <label>
+              <input type='password' placeholder='password' onChange={ (e) => setPassword(e.target.value)} value={password} />
+            </label>
+          </div>
+          <button>{ loginSelected ? 'Login' : 'Register' }</button>
+        </form>
       </div>
-      <form onSubmit={ loginSelected ? login : register }>
-        <div>
-          <label>
-            email:
-            <input type='text' onChange={ (e) => setEmail(e.target.value)} value={email} />
-          </label>
-        </div>
-        <div>
-          <label>
-            password:
-            <input type='password' onChange={ (e) => setPassword(e.target.value)} value={password} />
-          </label>
-        </div>
-        <button>{ loginSelected ? 'Login' : 'Register' }</button>
-      </form>
     </div>
   )
 }

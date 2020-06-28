@@ -1,3 +1,53 @@
+.login-view
+  background-color: purple
+  width: 100vw
+  height: 100vh
+  display: flex
+  flex-flow: column nowrap
+  justify-content: center
+  align-items: center
+  font-size: 25px
+
+.login-component
+  display: flex
+  flex-flow: column nowrap
+  align-items: center
+  justify-content: center
+  border: 1px solid black
+  border-radius: 7px
+  min-width: 25vw
+  min-height: 50vh
+  background-color: white
+
 .underline
-  border-bottom: 1px solid black
   color: red
+  border-bottom: 3px solid black
+
+.login-title
+  font-weight: 300
+  cursor: pointer
+  display: flex
+  flex-flow: row nowrap
+  padding: 5px
+  margin: 0px 0px 20px 0px
+  border-radius: 10px 10px 0px 0px
+  & > span
+    padding: 0 10px
+    &:hover
+      color: red
+
+.login-form
+  display: flex
+  flex-flow: column nowrap
+  align-items: stretch
+  & > *
+    margin: 5px
+  & input
+    border: 0px
+    border-bottom: 1px solid black
+    font-size: 15px
+  & button
+    border: none
+    background-color: green
+    color: white
+    padding: 5px 0px
