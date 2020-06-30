@@ -4,7 +4,7 @@ export function setLoggerUser(user) {
   return function(dispatch) {
     dispatch({
       type: SET_LOGGED_USER,
-      payload: user.email
+      payload: user
     })
   }
 }

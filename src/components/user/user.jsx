@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import fire from '../../fire.js';
-import { Link } from "react-router-dom";
 
-function Post() {
+function User(props) {
   const db = fire.firestore();
   const [posts, setPosts] = useState([]);
+  const [userPageName, setUserPageName] = useState('');
+
+  useEffect( () => {
+    if(props.match) {
+      setUserPageName(props.match.params.user)
+    }
+  }, [])
 
   useEffect(() => {
     const unsubscribe = db.collection('posts').onSnapshot( (snap) => {
@@ -15,23 +21,22 @@ function Post() {
     })
 
     return () => unsubscribe();
-  }, [])
+  }, []);
+
   let postsMap = posts.map( (post, i) => {
-    if(typeof post.user !== 'object') {
-      return (
-        <div key={i}>
-          <span>user: <Link to={`/${post.user}`}>{post.user}</Link></span>
-          {`text: ${post.text} date: ${new Date(post.date.seconds * 1000)}`}
-        </div>
-      )
+    if(post.user === userPageName) {
+      return (<div key={i}>{`user: ${post.user} text: ${post.text} date: ${new Date(post.date.seconds * 1000)}`}</div>)
+    } else {
+      return ''
     }
-  })
+  });
 
   return(
     <div>
+      <h3>displaying data for user {props.user}</h3>
       {postsMap}
     </div>
   )
 }
 
-export default Post;
+export default User;

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import fire from '../../fire.js';
+import { connect } from 'react-redux';
 
-function CreatePost() {
+function CreatePost(props) {
   const db = fire.firestore();
   const [text, setText] = useState('');
 
   function addPost() {
     const unsubscribe = db.collection('posts').add({
       text,
-      user: 'test@test.com',
+      user: props.loggedUser,
       date: new Date()
     })
 
@@ -23,4 +24,8 @@ function CreatePost() {
   )
 }
 
-export default CreatePost;
+const mapStateToProps = (state) => ({
+  loggedUser: state.user.loggedUser
+})
+
+export default connect(mapStateToProps)(CreatePost);

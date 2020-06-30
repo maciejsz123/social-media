@@ -1,35 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import './App.sass';
 import fire from './fire';
 import Home from './components/home/home';
 import Login from './components/login/login';
-import { connect } from 'react-redux';
 import { setLoggerUser } from './redux/actions/usersActions';
 
 function App(props) {
-  const [user, setUser] = useState(null);
-
   useEffect( () => {
     fire.auth().onAuthStateChanged( user => {
       if(user) {
-        setUser(user);
-        props.setLoggerUser(user);
+        props.setLoggerUser(user.email);
       } else {
-        setUser(null);
+        props.setLoggerUser(null);
       }
     })
   }, []);
 
   return (
     <div className="App">
-      {user ? <Home /> : <Login />}
+      {props.users.loggedUser ? <Home /> : <Login />}
     </div>
   );
 }
 
 const mapStateToProps = (state) => {
   return {
-    users: state.users
+    users: state.user
   }
 };
 
