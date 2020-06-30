@@ -2,9 +2,11 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import './App.sass';
 import fire from './fire';
-import Home from './components/home/home';
+import Home, { HomeRouter } from './components/home/home';
 import Login from './components/login/login';
+import User from './components/user/user';
 import { setLoggerUser } from './redux/actions/usersActions';
+
 
 function App(props) {
   useEffect( () => {
@@ -19,7 +21,7 @@ function App(props) {
 
   return (
     <div className="App">
-      {props.users.loggedUser ? <Home /> : <Login />}
+      {props.users.loggedUser ? <HomeRouter /> : <Login />}
     </div>
   );
 }
