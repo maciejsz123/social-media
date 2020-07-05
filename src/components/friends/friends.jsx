@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import fire from '../../fire.js';
 import { Link } from "react-router-dom";
+import { connect } from 'react-router';
 
 function Friends(props) {
   const db = fire.firestore();
   const [friends, setFriends] = useState([]);
 
   useEffect( () => {
+
     const unsubscribe = db.collection('users').onSnapshot( (snap) => {
 
       const newFriends = snap.docs.map( (doc) => {
@@ -27,6 +29,13 @@ function Friends(props) {
     return () => unsubscribe();
   }, [props]);
 
+  function acceptFriend(e, friend) {
+    e.preventDefault();
+    console.log(friend);
+    //add user to friends - logged user
+
+  }
+
   let mapFriends;
   let friendInvitations;
   if(friends) {
@@ -42,7 +51,10 @@ function Friends(props) {
         return friend
       }
     }).map( (friend, i) => (
-      <div key={i}><span>user: <Link to={`/user/${friend.name}`}>{friend.name}</Link></span></div>
+      <div key={i}>
+        <span>user: <Link to={`/user/${friend.name}`}>{friend.name}</Link></span>
+        <button onClick={ (e) => acceptFriend(e, friend)}>accept</button>
+      </div>
     ))
   } else {
     mapFriends = 'you have no friends'
@@ -58,4 +70,8 @@ function Friends(props) {
   )
 }
 
-export default Friends;
+const mapStateToProps = state => ({
+  users: props.users
+})
+
+export default connect()(Friends);

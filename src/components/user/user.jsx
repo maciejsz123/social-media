@@ -2,8 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Post from '../post/post';
 import Friends from '../friends/friends';
 import AddFriend from '../friends/addFriend';
+import { fetchUsers } from './redux/actions/usersActions';
 
 function User(props) {
+
+  useEffect( () => {
+    const unsubscribe = fetchUsers();
+    return () => unsubscribe();
+  }, [])
 
   return(
     <div>

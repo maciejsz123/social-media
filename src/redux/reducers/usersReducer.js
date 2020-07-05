@@ -1,7 +1,9 @@
-import { SET_LOGGED_USER } from '../actions/types';
+import { SET_LOGGED_USER, FETCH_POSTS, FETCH_USERS } from '../actions/types';
 
 const initialState = {
-  loggedUser: {user: null, userId: null}
+  loggedUser: {user: null, userId: null},
+  posts: [],
+  users: []
 };
 
 export default function(state = initialState, action) {
@@ -10,6 +12,16 @@ export default function(state = initialState, action) {
       return {
         ...state,
         loggedUser: action.payload
+      }
+    case FETCH_POSTS:
+      return {
+        ...state,
+        posts: action.payload
+      }
+    case FETCH_USERS:
+      return {
+        ...state,
+        users: action.payload
       }
     default:
       return state;

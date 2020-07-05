@@ -2,24 +2,19 @@ import React, { useState, useEffect } from 'react';
 import fire from '../../fire.js';
 import { Link } from "react-router-dom";
 import User from '../user/user'
-import CreatePost from './createPost'
+import CreatePost from './createPost';
+import { connect } from 'react-router';
+import { fetchPosts } from './redux/actions/usersActions';
 
 function Post(props) {
   const db = fire.firestore();
-  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = db.collection('posts').onSnapshot( (snap) => {
-      const newPosts = snap.docs.map( (doc) => (
-        doc.data()
-      ));
-      setPosts(newPosts);
-    })
-
+    const unsubscribe = fetchPosts();
     return () => unsubscribe();
-  }, [])
+  }, [props])
 
-  let postsMap = posts.map( (post, i) => {
+  let postsMap = props.posts.map( (post, i) => {
     if(typeof post.user !== 'object' && props.user === post.user) {
       return (
         <div key={i}>
@@ -45,4 +40,8 @@ function Post(props) {
   )
 }
 
-export default Post;
+const mapStateToProps = state => ({
+  posts: state.posts
+})
+
+export default connect(mapStateToProps, { fetchPosts })(Post);
