@@ -1,7 +1,7 @@
 import { SET_LOGGED_USER } from '../actions/types';
 
 const initialState = {
-  loggedUser: null
+  loggedUser: {user: null, userId: null}
 };
 
 export default function(state = initialState, action) {

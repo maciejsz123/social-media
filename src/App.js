@@ -7,21 +7,32 @@ import Login from './components/login/login';
 import User from './components/user/user';
 import { setLoggerUser } from './redux/actions/usersActions';
 
-
 function App(props) {
   useEffect( () => {
+    async function getUserId(email) {
+      const db = await fire.firestore().collection('users').get();
+      let userId = '';
+      await db.forEach( data => {
+        if(data.data().email === email) {
+          userId = data.id;
+        }
+      });
+      return userId;
+    }
+
     fire.auth().onAuthStateChanged( user => {
       if(user) {
-        props.setLoggerUser(user.email);
+        const userId = getUserId(user.email);
+        props.setLoggerUser(user.email.substring(0, user.email.indexOf("@")), userId);
       } else {
-        props.setLoggerUser(null);
+        props.setLoggerUser(null, null);
       }
     })
   }, []);
 
   return (
     <div className="App">
-      {props.users.loggedUser ? <HomeRouter /> : <Login />}
+      {props.users.loggedUser.user ? <HomeRouter /> : <Login />}
     </div>
   );
 }

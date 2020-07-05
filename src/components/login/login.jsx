@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import fire from '../../fire.js';
 import './login.sass';
 
@@ -6,6 +6,7 @@ const Login = () => {
   const [email, setEmail] = useState('test@test.com');
   const [password, setPassword] = useState('testtest');
   const [loginSelected, setLoginSelected] = useState(true);
+  const [newUser, setNewUser] = useState(false);
   const db = fire.firestore();
 
   function login(e) {
@@ -13,18 +14,33 @@ const Login = () => {
 
     fire.auth().signInWithEmailAndPassword(email, password)
     .then( user => console.log('logged'))
-    .catch( error => console.log('error'))
+    .catch( err => console.log(err))
+  }
+
+  async function updateFirestore() {
+    await db.collection('users').add({ email: email, name: email.substring(0, email.indexOf('@')), friends: [] })
+    .catch( err => console.log(err))
   }
 
   function register(e) {
     e.preventDefault();
 
     fire.auth().createUserWithEmailAndPassword(email, password)
-    .then( user => {
-      db.collection('users').add({ name: email, friends: [] });
+    .then( function(user) {
+      setNewUser(true);
+      return user;
     })
     .catch( error => console.log('error'))
   }
+
+  useEffect( () => {
+    fire.auth().onAuthStateChanged( () => {
+      if(newUser) {
+        updateFirestore();
+        setNewUser(false);
+      }
+    })
+  })
 
   return (
     <div className='login-view'>

@@ -9,7 +9,8 @@ function CreatePost(props) {
   function addPost() {
     const unsubscribe = db.collection('posts').add({
       text,
-      user: props.loggedUser,
+      user: props.loggedUser.user,
+      userId: props.loggedUser.userId,
       date: new Date()
     })
 
