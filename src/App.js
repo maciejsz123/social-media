@@ -30,6 +30,10 @@ function App(props) {
     })
   }, []);
 
+  if(props.users.loggedUserLoading) {
+    return <div>...Loading</div>
+  }
+
   return (
     <div className="App">
       {props.users.loggedUser.user ? <HomeRouter /> : <Login />}
@@ -39,7 +43,7 @@ function App(props) {
 
 const mapStateToProps = (state) => {
   return {
-    users: state.user
+    users: state.users
   }
 };
 

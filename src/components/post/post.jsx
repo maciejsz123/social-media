@@ -3,16 +3,16 @@ import fire from '../../fire.js';
 import { Link } from "react-router-dom";
 import User from '../user/user'
 import CreatePost from './createPost';
-import { connect } from 'react-router';
-import { fetchPosts } from './redux/actions/usersActions';
+import { connect } from 'react-redux';
+import { fetchPosts } from '../../redux/actions/postsActions';
 
 function Post(props) {
   const db = fire.firestore();
 
-  useEffect(() => {
-    const unsubscribe = fetchPosts();
-    return () => unsubscribe();
-  }, [props])
+  useEffect( () => {
+    props.fetchPosts();
+  }, [])
+
 
   let postsMap = props.posts.map( (post, i) => {
     if(typeof post.user !== 'object' && props.user === post.user) {
@@ -32,6 +32,14 @@ function Post(props) {
     }
   })
 
+  if(props.error) {
+    return <div>no data found</div>
+  }
+
+  if(props.loading) {
+    return <div>Loading...</div>
+  }
+
   return(
     <div>
       <CreatePost />
@@ -41,7 +49,9 @@ function Post(props) {
 }
 
 const mapStateToProps = state => ({
-  posts: state.posts
+  posts: state.posts.posts,
+  error: state.posts.error,
+  loading: state.posts.loading
 })
 
 export default connect(mapStateToProps, { fetchPosts })(Post);

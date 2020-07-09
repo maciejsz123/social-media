@@ -29,6 +29,7 @@ function AddFriend(props) {
         return friend.id === loggedUserData.id
       })
     }
+    console.log('here')
     if(!checkIfArleadyExists) {
       //add user to friends - to user clicked
       db.collection('users').doc(clickedUserData.id).set({...clickedUserData.data, friends:[...clickedUserData.data.friends, {id: loggedUserData.id, name: loggedUserData.data.name, accepted: false}]});
@@ -48,7 +49,7 @@ function AddFriend(props) {
 }
 
 const mapStateToProps = state => ({
-  loggedUser: state.user.loggedUser
+  loggedUser: state.users.loggedUser
 });
 
 export default connect(mapStateToProps)(AddFriend);

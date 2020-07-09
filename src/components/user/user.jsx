@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux'
 import Post from '../post/post';
 import Friends from '../friends/friends';
 import AddFriend from '../friends/addFriend';
-import { fetchUsers } from './redux/actions/usersActions';
+import { fetchUsers } from '../../redux/actions/usersActions';
 
 function User(props) {
 
   useEffect( () => {
-    const unsubscribe = fetchUsers();
-    return () => unsubscribe();
-  }, [])
+    props.fetchUsers();
+  }, [props.match.params.id])
 
   return(
     <div>
@@ -21,4 +21,8 @@ function User(props) {
   )
 }
 
-export default User;
+const mapStateToProps = state => ({
+
+})
+
+export default connect(mapStateToProps, { fetchUsers })(User);

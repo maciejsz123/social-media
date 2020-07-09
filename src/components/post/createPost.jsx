@@ -26,7 +26,7 @@ function CreatePost(props) {
 }
 
 const mapStateToProps = (state) => ({
-  loggedUser: state.user.loggedUser
+  loggedUser: state.users.loggedUser
 })
 
 export default connect(mapStateToProps)(CreatePost);

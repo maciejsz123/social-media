@@ -1,50 +1,70 @@
-import { SET_LOGGED_USER, FETCH_POSTS, FETCH_USERS } from './types';
+import { FETCH_USERS_BEGINNING,
+  FETCH_USERS_SUCCESS,
+  FETCH_USERS_FAILURE,
+  SET_LOGGED_USER_BEGIN,
+  SET_LOGGED_USER_SUCCESS,
+  SET_LOGGED_USER_FAIL
+  } from './types';
+import fire from '../../fire.js';
+const db = fire.firestore();
 
 export function setLoggerUser(user, id) {
   return function(dispatch) {
+    dispatch(setLoggedUserBegin());
     if(id) {
       id.then( userId => {
-        dispatch({
-          type: SET_LOGGED_USER,
-          payload: {user, userId}
-        })
+        dispatch(setLoggedUserSuccess({ user, userId }))
       })
     } else {
-      dispatch({
-        type: SET_LOGGED_USER,
-        payload: {user, userId: id}
-      })
+        dispatch(setLoggedUserFailure({ user, id }))
     }
-  }
-}
-
-export function fetchPosts() {
-  return function(dispatch) {
-    db.collection('posts').onSnapshot( (snap) => {
-      const newPosts = snap.docs.map( (doc) => (
-        doc.data()
-      ));
-      dispatch({
-        type: FETCH_POSTS,
-        payload: newPosts
-      })
-    })
   }
 }
 
 export function fetchUsers() {
   return function(dispatch) {
+    dispatch(fetchUsersBegin());
     db.collection('users').onSnapshot( (snap) => {
       const newUsers = snap.docs.map( (doc) => (
         {
-          doc.data(),
-          doc.id
+          data: doc.data(),
+          id: doc.id
         }
       ));
-      dispatch({
-        type: FETCH_USERS,
-        payload: newUsers
-      })
+
+      if(newUsers) {
+        dispatch(fetchUsersSuccess(newUsers));
+      } else {
+        dispatch(fetchUsersFailure('users not fetched'));
+      }
     })
   }
 }
+
+export const fetchUsersBegin = () => ({
+  type: FETCH_USERS_BEGINNING,
+})
+
+export const fetchUsersSuccess = (users) => ({
+  type: FETCH_USERS_SUCCESS,
+  payload: { users }
+});
+
+export const fetchUsersFailure = (error) => ({
+  type: FETCH_USERS_FAILURE,
+  payload: { error }
+})
+
+export const setLoggedUserBegin = () => ({
+  type: SET_LOGGED_USER_BEGIN,
+})
+
+export const setLoggedUserSuccess = (user) => ({
+  type: SET_LOGGED_USER_SUCCESS,
+  payload: { user }
+});
+
+export const setLoggedUserFailure = (error) => ({
+  type: SET_LOGGED_USER_FAIL,
+  payload: { error }
+})
