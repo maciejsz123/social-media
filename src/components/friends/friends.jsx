@@ -3,6 +3,7 @@ import fire from '../../fire.js';
 import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
 import { fetchUsers } from '../../redux/actions/usersActions';
+import Unfriend from './unfriend';
 
 function Friends(props) {
   const db = fire.firestore();
@@ -51,7 +52,7 @@ function Friends(props) {
   function createNewFriendObject(user, friend) {
     let newFriendState = user.data.friends.map( act => {
       if(act.id === friend.id) {
-        return {...act, accepted: true}
+        return {...act, accepted: true, invited: true}
       }
       return act
     })
@@ -70,23 +71,26 @@ function Friends(props) {
   let sentInvitations;
   if(friends) {
     mapFriends = friends.filter( friend => {
-      if(friend.accepted) {
-        return friend
-      }
+      if(friend.accepted) { return friend }
     }).map( (friend, i) => (
-      <div key={i}><span>user: <Link to={`/user/${friend.name}`}>{friend.name}</Link></span></div>
+      <div key={i}>
+        <span>user: <Link to={`/user/${friend.name}`}>{friend.name}</Link></span>
+        {
+          props.user !== props.loggedUser.user?
+          '' :
+          <Unfriend friend={friend} actualUser={actualUser}/>
+        }
+      </div>
     ));
 
     sentInvitations = friends.filter(friend => {
-      if(!friend.accepted) { return friend}
+      if(!friend.accepted && friend.invited && !friend.iWasInvited) { return friend }
     }).map( (friend, i) => (
       <div key={i}><span>user: <Link to={`/user/${friend.name}`}>{friend.name}</Link></span></div>
     ));
 
     friendInvitations = friends.filter( friend => {
-      if(!friend.accepted) {
-        return friend
-      }
+      if(!friend.accepted && friend.invited && friend.iWasInvited) { return friend }
     }).map( (friend, i) => (
       <div key={i}>
         <span>user: <Link to={`/user/${friend.name}`}>{friend.name}</Link></span>

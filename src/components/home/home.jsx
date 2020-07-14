@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import fire from '../../fire.js';
 import './home.sass';
-import Post from '../post/post.jsx';
+import Posts from '../post/posts.jsx';
 import CreatePost from '../post/createPost.jsx';
 import User from '../user/user';
 import {
@@ -38,7 +38,7 @@ const Home = () => {
 
   return (
     <div>
-      <Post />
+      <Posts />
     </div>
   )
 }

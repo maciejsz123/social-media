@@ -36,6 +36,7 @@ function App(props) {
 
   return (
     <div className="App">
+      <h3>logged as {props.users.loggedUser.user}</h3>
       {props.users.loggedUser.user ? <HomeRouter /> : <Login />}
     </div>
   );

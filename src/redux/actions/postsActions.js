@@ -8,7 +8,7 @@ export function fetchPosts() {
     db.collection('posts').onSnapshot( (snap) => {
       let newPosts = snap.docs.map( doc => (
         doc.data()
-      ))
+      )).sort((a,b) => a.date.seconds < b.date.seconds);
 
       if(snap) {
         dispatch(fetchPostsSuccess(newPosts))
