@@ -10,23 +10,35 @@ import Post from './post.jsx';
 
 function Posts(props) {
   const db = fire.firestore();
+  const [loggedUserFriends ,setLoggedUserFriends] = useState(undefined);
 
   useEffect( () => {
     props.fetchPosts();
-  }, [])
+  }, []);
 
   useEffect( () => {
     props.fetchUsers();
-  }, [])
+  }, []);
 
-  let postsMap = props.posts.map( (post, i) => {
+  useEffect( () => {
+    let newLoggedUserData = props.usersData.filter( friend => friend.id === props.loggedUser.userId)
+    setLoggedUserFriends(newLoggedUserData.length ? newLoggedUserData[0].data.friends : undefined);
+  }, [props.usersData]);
+
+  let postsMap = props.posts.filter( post => {
     if(typeof post.user !== 'object' && props.user === post.user) {
-      return <Post key={i} data={post} />
-    } else if(typeof post.user !== 'object' && !props.user/* &&
-    (post.userId === props.loggedUser.userId || post.userId === props.usersData.data.friends.id && props.usersData.data.friends.accepted === true)*/) {
-      return <Post key={i} data={post} />
+      return post
+    } else if(typeof post.user !== 'object' && !props.user && loggedUserFriends) {
+      return loggedUserFriends.filter( friend => {
+        if(friend.accepted && (post.userId === friend.id || post.userId === props.loggedUser.userId)) {
+          return post
+        }
+      })
     }
-  }).sort()
+  })
+  .sort( (a,b) => b.date.seconds - a.date.seconds)
+  .map( (post, i) => <Post key={i} data={post} />)
+
 
   if(props.error) {
     return <div>no data found</div>
