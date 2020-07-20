@@ -25,20 +25,23 @@ function Posts(props) {
     setLoggedUserFriends(newLoggedUserData.length ? newLoggedUserData[0].data.friends : undefined);
   }, [props.usersData]);
 
-  let postsMap = props.posts.filter( post => {
+  let postsMap = props.posts.reduce( (acc, post) => {
     if(typeof post.user !== 'object' && props.user === post.user) {
-      return post
-    } else if(typeof post.user !== 'object' && !props.user && loggedUserFriends) {
-      return loggedUserFriends.filter( friend => {
-        if(friend.accepted && (post.userId === friend.id || post.userId === props.loggedUser.userId)) {
-          return post
+      acc.push(post);
+    } else if (typeof post.user !== 'object' && !props.user && loggedUserFriends) {
+      let v = loggedUserFriends.reduce( (acc1, friend) => {
+        if(friend.accepted && !acc1.length && (post.userId === friend.id || post.userId === props.loggedUser.userId)) {
+          acc1.push(post);
         }
-      })
+        return acc1
+      }, [])
+      acc.push(...v)
+
     }
-  })
+    return acc
+  }, [])
   .sort( (a,b) => b.date.seconds - a.date.seconds)
   .map( (post, i) => <Post key={i} data={post} />)
-
 
   if(props.error) {
     return <div>no data found</div>

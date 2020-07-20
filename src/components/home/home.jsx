@@ -4,6 +4,7 @@ import './home.sass';
 import Posts from '../post/posts.jsx';
 import CreatePost from '../post/createPost.jsx';
 import User from '../user/user';
+import Chat from '../chat/chat';
 import {
   BrowserRouter as Router,
   Switch,
@@ -38,6 +39,7 @@ const Home = () => {
 
   return (
     <div>
+      <Chat />
       <Posts />
     </div>
   )
