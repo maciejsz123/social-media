@@ -25,27 +25,54 @@ function App(props) {
         const userId = getUserId(user.email);
         props.setLoggerUser(user.email.substring(0, user.email.indexOf("@")), userId);
       } else {
-        props.setLoggerUser(null, null);
+        props.setLoggerUser();
       }
     })
   }, []);
 
-  if(props.users.loggedUserLoading) {
+  useEffect( () => {
+    setOnlineUser(true, props.loggedUser, props.users);
+  }, [props.loggedUser, props.users])
+
+  if(props.loggedUserLoading) {
     return <div>...Loading</div>
   }
 
   return (
     <div className="App">
-      <h3>logged as {props.users.loggedUser.user}</h3>
-      {props.users.loggedUser.user ? <HomeRouter /> : <Login />}
+      <h3>logged as {props.loggedUser.user}</h3>
+      {props.loggedUser.user ? <HomeRouter loggedUser={props.loggedUser} users={props.users} /> : <Login />}
     </div>
   );
 }
 
 const mapStateToProps = (state) => {
   return {
-    users: state.users
+    loggedUser: state.users.loggedUser,
+    users: state.users.users
   }
 };
 
-export default connect(mapStateToProps, {setLoggerUser})(App);
+
+  export function setOnlineUser(toLogIn = false, loggedUser, users) {
+    if(loggedUser.userId) {
+      let getUser = users.reduce( (acc, user) => {
+        if(loggedUser.userId === user.id) {
+          let newObj = {
+            ...user,
+            data: {
+              ...user.data,
+              online: toLogIn
+            }
+          };
+          acc.push(newObj);
+        }
+        return acc
+      }, []);
+      if(getUser.length) {
+        fire.firestore().collection('users').doc(getUser[0].id).set(getUser[0].data)
+      }
+    }
+  }
+
+export default connect(mapStateToProps, { setLoggerUser })(App);

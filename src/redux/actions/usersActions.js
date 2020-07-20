@@ -8,7 +8,7 @@ import { FETCH_USERS_BEGINNING,
 import fire from '../../fire.js';
 const db = fire.firestore();
 
-export function setLoggerUser(user, id) {
+export function setLoggerUser(user=null, id=null) {
   return function(dispatch) {
     dispatch(setLoggedUserBegin());
     if(id) {
@@ -18,6 +18,7 @@ export function setLoggerUser(user, id) {
     } else {
         dispatch(setLoggedUserFailure({ user, id }))
     }
+
   }
 }
 

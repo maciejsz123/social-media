@@ -11,13 +11,15 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import { setOnlineUser } from '../../App.js';
 
-export const HomeRouter = () => {
+export const HomeRouter = (props) => {
   const [searchFriend, setSearchFriend] = useState('');
 
   function logout(e) {
     e.preventDefault();
     fire.auth().signOut();
+    setOnlineUser(false, props.loggedUser, props.users);
   }
 
   return (
