@@ -18,7 +18,7 @@ const Login = () => {
   }
 
   async function updateFirestore() {
-    await db.collection('users').add({ email: email, name: email.substring(0, email.indexOf('@')), friends: [] })
+    await db.collection('users').add({ email: email, name: email.substring(0, email.indexOf('@')), friends: [], online: false })
     .catch( err => console.log(err))
   }
 

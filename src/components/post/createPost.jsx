@@ -6,8 +6,8 @@ function CreatePost(props) {
   const db = fire.firestore();
   const [text, setText] = useState('');
 
-  function addPost() {
-    const unsubscribe = db.collection('posts').add({
+  async function addPost() {
+    const unsubscribe = await db.collection('posts').add({
       text,
       user: props.loggedUser.user,
       userId: props.loggedUser.userId,

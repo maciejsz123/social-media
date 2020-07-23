@@ -41,7 +41,6 @@ const Home = () => {
 
   return (
     <div>
-      <Chat />
       <Posts />
     </div>
   )

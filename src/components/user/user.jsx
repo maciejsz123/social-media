@@ -7,9 +7,9 @@ import { fetchUsers } from '../../redux/actions/usersActions';
 
 function User(props) {
 
-  useEffect( () => {
+  /*useEffect( () => {
     props.fetchUsers();
-  }, [props.match.params.id])
+  }, [props.match.params.id])*/
 
   return(
     <div>

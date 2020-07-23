@@ -38,6 +38,7 @@ function Posts(props) {
       acc.push(...v)
 
     }
+
     return acc
   }, [])
   .sort( (a,b) => b.date.seconds - a.date.seconds)

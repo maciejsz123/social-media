@@ -2,50 +2,66 @@ import React, { useState, useEffect } from 'react';
 import fire from '../../fire.js';
 import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
-import { fetchUsers } from '../../redux/actions/usersActions';
-import Unfriend from './unfriend';
 
 function Friends(props) {
   const db = fire.firestore();
   const [friends, setFriends] = useState([]);
   const [actualUser, setActualUser] = useState('');
+  const [fetched, setFetched] = useState(false);
+  const [fetchedData, setFetchedData] = useState([]);
 
   useEffect( () => {
-    if(!props.users.length) {
-      return;
+    fetchUsers();
+    async function fetchUsers() {
+      let data = [];
+      await db.collection('users').onSnapshot( (snap) => {
+        data = snap.docs.map( (doc) => (
+          {
+            data: doc.data(),
+            id: doc.id
+          }
+        ));
+        setFetchedData(data);
+        setFetched(true)
+      })
     }
-    let getActualUser = '';
-    const newFriends = props.users.map( (doc) => {
-      if(doc.data.name === props.user) {
-        getActualUser = doc
-      }
-      return doc.data;
-    }).filter( doc => {
-      if(doc.friends.length) {
-        if(doc.name === props.user) {
-          return doc.friends
-        }
-      }
-    }).map( doc => {
-      return doc.friends
-    });
+
+  }, []);
+
+  useEffect( () => {
+    const getActualUser = getActualUserFoo(fetchedData, props.user);
+
+    const newFriends = fetchedData.filter( doc => doc.data.friends.length && doc.id === getActualUser.id)
+    .map( doc => doc.data.friends);
 
     setFriends(...newFriends);
     setActualUser(getActualUser);
-  }, [props.users]);
+  }, [fetched]);
+
+  function getActualUserFoo(arrayOfUsers, userName) {
+    return arrayOfUsers.filter( user => user.data.name === userName)[0];
+  }
 
   function acceptFriend(e, friend) {
     e.preventDefault();
 
-    const friendData = props.users.filter( user => {
-      return user.id === friend.id
+    db.collection('users').onSnapshot( async (snap) => {
+      const getUsers = await snap.docs.map( (doc) => (
+        {
+          data: doc.data(),
+          id: doc.id
+        }
+      ));
+
+      const friendData = getUsers.filter( user => user.id === friend.id );
+
+      const actualObj = createNewFriendObject(getActualUserFoo(getUsers, props.user), friend);
+      const friendObj = createNewFriendObject(...friendData, getActualUserFoo(getUsers, props.user));
+
+      await db.collection('users').doc(actualObj.id).set(actualObj.data);
+      await db.collection('users').doc(friendObj.id).set(friendObj.data);
+
     })
-
-    const actualObj = createNewFriendObject(actualUser, friend);
-    const friendObj = createNewFriendObject(...friendData, actualUser);
-
-    db.collection('users').doc(actualObj.id).set(actualObj.data);
-    db.collection('users').doc(friendObj.id).set(friendObj.data);
 
   }
 
@@ -66,32 +82,68 @@ function Friends(props) {
     }
   }
 
+  function unfriend(e, friend) {
+    e.preventDefault();
+
+    db.collection('users').onSnapshot( async (snap) => {
+      const getUsers = await snap.docs.map( (doc) => (
+        {
+          data: doc.data(),
+          id: doc.id
+        }
+      ));
+
+      const friendData = getUsers.filter( user => user.id === friend.id);
+
+      const actualObj = createNewDeleteObject(getActualUserFoo(getUsers, props.user), friend);
+      const friendObj = createNewDeleteObject(...friendData, getActualUserFoo(getUsers, props.user));
+
+      await db.collection('users').doc(actualObj.id).set(actualObj.data)
+      await db.collection('users').doc(friendObj.id).set(friendObj.data)
+    })
+  }
+
+  function createNewDeleteObject(user, friend) {
+    let newFriendState = user.data.friends.reduce( (total, act) => {
+      if(act.id !== friend.id) {
+        total.push(act)
+        return total
+      }
+      return total
+    }, [])
+
+    return {
+      id: user.id,
+      data: {
+        ...user.data,
+        friends: [...newFriendState]
+      }
+    }
+  }
+
   let mapFriends;
   let friendInvitations;
   let sentInvitations;
   if(friends) {
-    mapFriends = friends.filter( friend => {
-      if(friend.accepted) { return friend }
-    }).map( (friend, i) => (
+    mapFriends = friends.filter( friend => friend.accepted)
+    .map( (friend, i) => (
       <div key={i}>
         <span>user: <Link to={`/user/${friend.name}`}>{friend.name}</Link></span>
         {
-          props.user !== props.loggedUser.user?
+          props.user !== props.loggedUser.user ?
           '' :
-          <Unfriend friend={friend} actualUser={actualUser}/>
+          <span><button onClick={(e) => unfriend(e, friend)}>unfriend</button></span>
         }
       </div>
     ));
 
-    sentInvitations = friends.filter(friend => {
-      if(!friend.accepted && friend.invited && !friend.iWasInvited) { return friend }
-    }).map( (friend, i) => (
+    sentInvitations = friends.filter(friend => !friend.accepted && friend.invited && !friend.iWasInvited)
+    .map( (friend, i) => (
       <div key={i}><span>user: <Link to={`/user/${friend.name}`}>{friend.name}</Link></span></div>
     ));
 
-    friendInvitations = friends.filter( friend => {
-      if(!friend.accepted && friend.invited && friend.iWasInvited) { return friend }
-    }).map( (friend, i) => (
+    friendInvitations = friends.filter( friend => !friend.accepted && friend.invited && friend.iWasInvited)
+    .map( (friend, i) => (
       <div key={i}>
         <span>user: <Link to={`/user/${friend.name}`}>{friend.name}</Link></span>
         <button onClick={ (e) => acceptFriend(e, friend)}>accept</button>
@@ -134,10 +186,7 @@ function Friends(props) {
 }
 
 const mapStateToProps = state => ({
-  users: state.users.users,
-  loading: state.users.loading,
-  error: state.users.error,
   loggedUser: state.users.loggedUser
 })
 
-export default connect(mapStateToProps, { fetchUsers })(Friends);
+export default connect(mapStateToProps)(Friends);

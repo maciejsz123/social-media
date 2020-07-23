@@ -24,14 +24,13 @@ function AddFriend(props) {
       return ;
     }
 
-    let data = await db.collection('users').get();
     let loggedUserData = {};
     let clickedUserData = {};
-    data.forEach(doc => {
-      if(doc.data().name === props.user) {
-        clickedUserData = {data: doc.data(), id: doc.id};
+    props.users.forEach(doc => {
+      if(doc.data.name === props.user) {
+        clickedUserData = {data: doc.data, id: doc.id};
       } else if(doc.id === props.loggedUser.userId) {
-        loggedUserData = {data: doc.data(), id: doc.id};
+        loggedUserData = {data: doc.data, id: doc.id};
       }
     });
     let checkIfArleadyExists = false;
@@ -43,9 +42,9 @@ function AddFriend(props) {
 
     if(!checkIfArleadyExists || !isInvited) {
       //add user to friends - to user clicked
-      db.collection('users').doc(clickedUserData.id).set({...clickedUserData.data, friends:[...clickedUserData.data.friends, {id: loggedUserData.id, name: loggedUserData.data.name, accepted: false, invited: true, iWasInvited: true}]});
+      await db.collection('users').doc(clickedUserData.id).set({...clickedUserData.data, friends:[...clickedUserData.data.friends, {id: loggedUserData.id, name: loggedUserData.data.name, accepted: false, invited: true, iWasInvited: true}]});
       //add user to friends - logged user
-      db.collection('users').doc(loggedUserData.id).set({...loggedUserData.data, friends: [...loggedUserData.data.friends, {id: clickedUserData.id, name: clickedUserData.data.name, accepted: false, invited: true, iWasInvited: false}]});
+      await db.collection('users').doc(loggedUserData.id).set({...loggedUserData.data, friends: [...loggedUserData.data.friends, {id: clickedUserData.id, name: clickedUserData.data.name, accepted: false, invited: true, iWasInvited: false}]});
     }
   }
 

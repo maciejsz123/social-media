@@ -54,7 +54,7 @@ const mapStateToProps = (state) => {
 };
 
 
-  export function setOnlineUser(toLogIn = false, loggedUser, users) {
+  export async function setOnlineUser(toLogIn = false, loggedUser, users) {
     if(loggedUser.userId) {
       let getUser = users.reduce( (acc, user) => {
         if(loggedUser.userId === user.id) {
@@ -70,7 +70,7 @@ const mapStateToProps = (state) => {
         return acc
       }, []);
       if(getUser.length) {
-        fire.firestore().collection('users').doc(getUser[0].id).set(getUser[0].data)
+        await fire.firestore().collection('users').doc(getUser[0].id).set(getUser[0].data)
       }
     }
   }
