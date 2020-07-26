@@ -4,7 +4,8 @@ import { SET_LOGGED_USER,
   FETCH_USERS_FAILURE,
   SET_LOGGED_USER_BEGIN,
   SET_LOGGED_USER_SUCCESS,
-  SET_LOGGED_USER_FAIL
+  SET_LOGGED_USER_FAIL,
+  SET_ONLINE_USERS_COUNT
  } from '../actions/types';
 
 const initialState = {
@@ -13,7 +14,8 @@ const initialState = {
   loggedUserError: null,
   users: [],
   loading: false,
-  error: null
+  error: null,
+  onlineUsers: 0
 };
 
 export default function(state = initialState, action) {
@@ -55,6 +57,11 @@ export default function(state = initialState, action) {
         users: [],
         loading: false,
         error: action.payload.error
+      }
+    case SET_ONLINE_USERS_COUNT:
+      return {
+        ...state,
+        onlineUsers: action.payload
       }
     default:
       return state;

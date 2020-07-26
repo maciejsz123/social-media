@@ -3,7 +3,8 @@ import { FETCH_USERS_BEGINNING,
   FETCH_USERS_FAILURE,
   SET_LOGGED_USER_BEGIN,
   SET_LOGGED_USER_SUCCESS,
-  SET_LOGGED_USER_FAIL
+  SET_LOGGED_USER_FAIL,
+  SET_ONLINE_USERS_COUNT
   } from './types';
 import fire from '../../fire.js';
 const db = fire.firestore();
@@ -35,6 +36,7 @@ export function fetchUsers() {
 
       if(newUsers) {
         dispatch(fetchUsersSuccess(newUsers));
+        dispatch(setNumberOnlineUsers(newUsers));
       } else {
         dispatch(fetchUsersFailure('users not fetched'));
       }
@@ -50,6 +52,15 @@ export const fetchUsersSuccess = (users) => ({
   type: FETCH_USERS_SUCCESS,
   payload: { users }
 });
+
+export const setNumberOnlineUsers = (users) => {
+  let newUsers = users.filter( user => user.data.online).length;
+  return {
+    type: SET_ONLINE_USERS_COUNT,
+    payload: newUsers
+  }
+}
+
 
 export const fetchUsersFailure = (error) => ({
   type: FETCH_USERS_FAILURE,

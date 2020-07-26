@@ -125,7 +125,8 @@ function Friends(props) {
   let friendInvitations;
   let sentInvitations;
   if(friends) {
-    mapFriends = friends.filter( friend => friend.accepted)
+    console.log(friends, props.user);
+    mapFriends = friends.filter( friend => friend.accepted && friend.name !== props.user)
     .map( (friend, i) => (
       <div key={i}>
         <span>user: <Link to={`/user/${friend.name}`}>{friend.name}</Link></span>

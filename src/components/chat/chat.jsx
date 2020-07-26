@@ -18,10 +18,9 @@ function Chat(props) {
       })
       return acc
     }, [])
-
     setOnlineFriends(newOnlineFriends)
 
-  }, [props.users])
+  }, [props.onlineUsers])
 
   const onlineFriendsMap = onlineFriends.map( (user, i) => (
     <div key={i}>{`user ${user.data.name} is online`}</div>
@@ -35,7 +34,8 @@ function Chat(props) {
 
 const mapStateToProps = state => ({
   users: state.users.users,
-  loggedUser: state.users.loggedUser
+  loggedUser: state.users.loggedUser,
+  onlineUsers: state.users.onlineUsers
 })
 
 export default connect(mapStateToProps, {  })(Chat);
