@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import fire from '../../fire.js';
 import './home.sass';
 import Posts from '../post/posts.jsx';
-import CreatePost from '../post/createPost.jsx';
 import User from '../user/user';
 import Chat from '../chat/chat';
 import {

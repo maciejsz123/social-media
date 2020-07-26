@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux'
 import Posts from '../post/posts';
 import Friends from '../friends/friends';
@@ -6,11 +6,6 @@ import AddFriend from '../friends/addFriend';
 import { fetchUsers } from '../../redux/actions/usersActions';
 
 function User(props) {
-
-  /*useEffect( () => {
-    props.fetchUsers();
-  }, [props.match.params.id])*/
-
   return(
     <div>
       <h3>displaying data for user {props.match.params.id}</h3>

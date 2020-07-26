@@ -11,7 +11,7 @@ function Chat(props) {
     .filter( user => user.accepted)
 
     const newOnlineFriends = props.users.reduce( (acc, user) => {
-      friendsFilter.filter( friend => {
+      friendsFilter.forEach( friend => {
         if(user.data.online && user.id === friend.id) {
           acc.push(user)
         }

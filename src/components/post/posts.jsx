@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import fire from '../../fire.js';
-import { Link } from "react-router-dom";
-import User from '../user/user'
 import CreatePost from './createPost';
 import { connect } from 'react-redux';
 import { fetchPosts } from '../../redux/actions/postsActions';
@@ -9,7 +6,6 @@ import { fetchUsers } from '../../redux/actions/usersActions';
 import Post from './post.jsx';
 
 function Posts(props) {
-  const db = fire.firestore();
   const [loggedUserFriends, setLoggedUserFriends] = useState([]);
 
   useEffect( () => {

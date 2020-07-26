@@ -6,14 +6,15 @@ import { connect } from 'react-redux';
 function Friends(props) {
   const db = fire.firestore();
   const [friends, setFriends] = useState([]);
-  const [actualUser, setActualUser] = useState('');
   const [fetched, setFetched] = useState(false);
   const [fetchedData, setFetchedData] = useState([]);
 
   useEffect( () => {
+    let unmounted = false;
     fetchUsers();
     async function fetchUsers() {
       let data = [];
+
       await db.collection('users').onSnapshot( (snap) => {
         data = snap.docs.map( (doc) => (
           {
@@ -22,21 +23,26 @@ function Friends(props) {
           }
         ));
         setFetchedData(data);
-        setFetched(true)
-      })
-    }
+        setFetched(true);
+      });
 
+    }
+    return () => { unmounted = true };
   }, []);
 
   useEffect( () => {
-    const getActualUser = getActualUserFoo(fetchedData, props.user);
+    try {
+      if(!fetched) return;
+      const getActualUser = getActualUserFoo(fetchedData, props.user);
 
-    const newFriends = fetchedData.filter( doc => doc.data.friends.length && doc.id === getActualUser.id)
-    .map( doc => doc.data.friends);
+      const newFriends = fetchedData.filter( doc => doc.data.friends.length && doc.id === getActualUser.id)
+      .map( doc => doc.data.friends);
 
-    setFriends(...newFriends);
-    setActualUser(getActualUser);
-  }, [fetched]);
+      setFriends(...newFriends);
+    } catch(err) {
+      console.log('an error, refreshing');
+    }
+  });
 
   function getActualUserFoo(arrayOfUsers, userName) {
     return arrayOfUsers.filter( user => user.data.name === userName)[0];
@@ -125,7 +131,6 @@ function Friends(props) {
   let friendInvitations;
   let sentInvitations;
   if(friends) {
-    console.log(friends, props.user);
     mapFriends = friends.filter( friend => friend.accepted && friend.name !== props.user)
     .map( (friend, i) => (
       <div key={i}>
