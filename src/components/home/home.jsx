@@ -3,7 +3,6 @@ import fire from '../../fire.js';
 import './home.sass';
 import Posts from '../post/posts.jsx';
 import User from '../user/user';
-import Chat from '../chat/chat';
 import {
   BrowserRouter as Router,
   Switch,
@@ -23,11 +22,14 @@ export const HomeRouter = (props) => {
 
   return (
     <Router>
-      <nav>
-        <input type='text' placeholder='search friends' value={searchFriend} onChange={ (e) => setSearchFriend(e.target.value)}/>
-        <button onClick={logout}>logout</button>
-        <span><Link to='/'>Home</Link></span>
-      </nav>
+      <div>
+        <h3>logged as {props.loggedUser.user}</h3>
+        <nav>
+          <input type='text' placeholder='search friends' value={searchFriend} onChange={ (e) => setSearchFriend(e.target.value)}/>
+          <button onClick={logout}>logout</button>
+          <span><Link to='/'>Home</Link></span>
+        </nav>
+      </div>
       <Switch>
         <Route path='/' exact component={Home} />
         <Route path="/user/:id" component={User} />
@@ -40,7 +42,6 @@ const Home = () => {
 
   return (
     <div>
-      <Chat />
       <Posts />
     </div>
   )

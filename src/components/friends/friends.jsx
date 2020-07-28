@@ -159,7 +159,6 @@ function Friends(props) {
     mapFriends = 'you have no friends';
   }
 
-
   if(props.loading) {
     return <div>Loading...</div>
   }

@@ -4,6 +4,8 @@ import './App.sass';
 import fire from './fire';
 import { HomeRouter } from './components/home/home';
 import Login from './components/login/login';
+import ListOfFriends from './components/chat/listOfFriends';
+import Chat from './components/chat/chat';
 import { setLoggerUser } from './redux/actions/usersActions';
 
 function App(props) {
@@ -39,8 +41,13 @@ function App(props) {
 
   return (
     <div className="App">
-      <h3>logged as {props.loggedUser.user}</h3>
-      {props.loggedUser.user ? <HomeRouter loggedUser={props.loggedUser} users={props.users} /> : <Login />}
+      {props.loggedUser.user ?
+        <div id='container'>
+          <HomeRouter loggedUser={props.loggedUser} users={props.users} />
+          <ListOfFriends />
+          {props.chatList.map( (user, i) => <Chat key={i} index={i} userId={user}/>)}
+        </div>
+        : <Login />}
     </div>
   );
 }
@@ -48,7 +55,8 @@ function App(props) {
 const mapStateToProps = (state) => {
   return {
     loggedUser: state.users.loggedUser,
-    users: state.users.users
+    users: state.users.users,
+    chatList: state.chat.openedUsersTabs
   }
 };
 

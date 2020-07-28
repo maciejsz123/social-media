@@ -1,41 +1,20 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import './chat.sass';
 
 function Chat(props) {
-  const [onlineFriends, setOnlineFriends] = useState([]);
-
-  useEffect(() => {
-    const friendsFilter = props.users.filter( user => user.id === props.loggedUser.userId)
-    .map( user => user.data.friends)
-    .flat()
-    .filter( user => user.accepted)
-
-    const newOnlineFriends = props.users.reduce( (acc, user) => {
-      friendsFilter.forEach( friend => {
-        if(user.data.online && user.id === friend.id) {
-          acc.push(user)
-        }
-      })
-      return acc
-    }, [])
-    setOnlineFriends(newOnlineFriends)
-
-  }, [props.onlineUsers])
-
-  const onlineFriendsMap = onlineFriends.map( (user, i) => (
-    <div key={i}>{`user ${user.data.name} is online`}</div>
-  ))
-
+  const [pxFromRight, setPxFromRight] = useState(330)
   return (
-    <div>{ onlineFriends.length ?
-      onlineFriendsMap : 'no friends active'}</div>
+    <div className='chat-window' style={{right: `${pxFromRight*props.index}px`}}>
+      <div>name</div><div>zamknij</div>
+      <div>messages</div>
+      <div>write message</div>
+    </div>
   )
 }
 
 const mapStateToProps = state => ({
-  users: state.users.users,
-  loggedUser: state.users.loggedUser,
-  onlineUsers: state.users.onlineUsers
+  messages: state.chat.messages
 })
 
-export default connect(mapStateToProps, {  })(Chat);
+export default connect(mapStateToProps, {})(Chat);
