@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import './App.sass';
 import fire from './fire';
-import { HomeRouter } from './components/home/home';
+import HomeRouter from './components/home/homeRouter';
 import Login from './components/login/login';
 import ListOfFriends from './components/chat/listOfFriends';
 import Chat from './components/chat/chat';
@@ -43,7 +43,7 @@ function App(props) {
     <div className="App">
       {props.loggedUser.user ?
         <div id='container'>
-          <HomeRouter loggedUser={props.loggedUser} users={props.users} />
+          <HomeRouter />
           <ListOfFriends />
           {props.chatList.map( (user, i) => <Chat key={i} index={i} userId={user}/>)}
         </div>
